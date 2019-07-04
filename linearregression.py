@@ -42,8 +42,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3)
 '''
 
 
-def run_regression():
-    df1,i = load_frames()
+def run_regression(df1, i):
+    # df1,i = load_frames()
     X_train, y_train, helper, X_test, y_test = configure_dataset(df1,i)
 
     regressor = LinearRegression()
@@ -56,6 +56,8 @@ def run_regression():
     helper['Close'] = y_pred
 
     showResults(helper, y_test, y_pred)
+
+    return y_pred
 
 
 def showResults(helper, y_test, y_pred):
