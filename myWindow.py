@@ -8,6 +8,8 @@ import pandas as pd
 from svm import svm_prediction
 from main import load_file, knn_predict, train_valid_split, preprocess, plot_graph, auto_arima_predict
 import matplotlib.pyplot as plt
+from ma import predict_ma
+from linearregression import run_regression
 
 class MyWindow:
     def __init__(self):
@@ -86,6 +88,12 @@ class MyWindow:
         elif self.algorithm == "Moving average":
             print("MA izabran")
             #NISAM TESTIRAO MA, TREBA MODIFIKOVATI
+
+            new_df = preprocess(load_file(self.file_path))
+            x_train, y_train, x_valid, y_valid, self.train, self.valid = train_valid_split(new_df)
+            self.y_predict = predict_ma(df)
+            self.y_train = y_train
+            self.y_val = y_valid
 
         elif self.algorithm == "KNN":
             print("KNN izabran")
