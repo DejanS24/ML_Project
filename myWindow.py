@@ -1,12 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
-import pygal
 from bokeh.layouts import gridplot
 from bokeh.plotting import figure, show, output_file
+import linearregression
 import numpy as np
 import pandas as pd
+import linearregression
 from svm import svm_prediction
-from main import load_file, knn_predict, train_valid_split, preprocess, plot_graph, auto_arima_predict
+from main import load_file, knn_predict, train_valid_split, preprocess, plot_graph, auto_arima_predict,prophet_predict
 import matplotlib.pyplot as plt
 
 class MyWindow:
@@ -118,7 +119,7 @@ class MyWindow:
             df = load_file(self.file_path)
             new_df = preprocess(df)
             x_train, y_train, x_valid, y_valid, self.train, self.valid = train_valid_split(new_df)
-            self.y_predict = run_regression(df, 1)
+            self.y_predict = linearregression.run_regression(x_train, y_train, x_valid, y_valid)
             self.y_train = y_train
             self.y_val = y_valid
 
@@ -126,6 +127,20 @@ class MyWindow:
             plt.plot(self.y_val)
             plt.plot(self.y_predict)
             plt.show()
+        elif self.algorithm == "Prophet":
+            print("Prophet")
+            df = load_file(self.file_path)
+            new_df = preprocess(df)
+            x_train, y_train, x_valid, y_valid, self.train, self.valid = train_valid_split(new_df)
+            self.y_predict = prophet_predict(df, self.valid)
+            self.y_train = y_train
+            self.y_val = y_valid
+
+            plt.plot(self.y_train)
+            plt.plot(self.y_val)
+            plt.plot(self.y_predict)
+            plt.show()
+
 
         print(self.y_predict)
 
@@ -138,6 +153,7 @@ class MyWindow:
         p1.yaxis.axis_label = 'Price'
 
         plot_dates = df['Date']
+        print(self.valid)
         plot_dates = plot_dates[-len(self.y_predict):]
         p1.line(plot_dates, self.valid['Close'], color='#A6CEE3', legend=self.mode)
         p1.line(plot_dates, self.y_predict, color='#B2DF8A', legend="Predicted "+self.mode)
