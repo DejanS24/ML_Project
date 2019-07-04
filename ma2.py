@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 ticker = 'AMD'
 timeframe = '1y'
 
-df = pd.read_csv('NSE-TATAGLOBAL11.csv')
+df = pd.read_csv('googl.us.txt')
 # df = p.chartDF(ticker, timeframe)
 df = df[['Close']]
 df.reset_index(level=0, inplace=True)

@@ -64,10 +64,10 @@ def train_valid_split(new_data):
     x_valid = valid.drop('Close', axis=1)
     y_valid = valid['Close']
 
-    x_train_scaled = scaler.fit_transform(x_train)
-    x_train = pd.DataFrame(x_train_scaled)
-    x_valid_scaled = scaler.fit_transform(x_valid)
-    x_valid = pd.DataFrame(x_valid_scaled)
+    # x_train_scaled = scaler.fit_transform(x_train)
+    # x_train = pd.DataFrame(x_train_scaled)
+    # x_valid_scaled = scaler.fit_transform(x_valid)
+    # x_valid = pd.DataFrame(x_valid_scaled)
 
     return x_train, y_train, x_valid, y_valid, train, valid
 
@@ -99,11 +99,11 @@ def auto_arima_predict(data):
 
     l = len(data)
     if l < 4293:
-        train = new_data[:round(l * 4 / 5)]
-        valid = new_data[round(l * 4 / 5):]
+        train = data[:round(l * 4 / 5)]
+        valid = data[round(l * 4 / 5):]
     else:
-        train = new_data[-4293:l - 973]
-        valid = new_data[-973:]
+        train = data[-4293:l - 973]
+        valid = data[-973:]
 
     training = train['Close']
     validation = valid['Close']
@@ -112,7 +112,7 @@ def auto_arima_predict(data):
                        trace=True, error_action='ignore', suppress_warnings=True)
     model.fit(training)
 
-    forecast = model.predict(n_periods=973)
+    forecast = model.predict(n_periods=round(len(data)*1/5))
     forecast = pd.DataFrame(forecast, index=valid.index, columns=['Prediction'])
 
     plt.plot(train['Close'])
@@ -122,7 +122,7 @@ def auto_arima_predict(data):
 
     print(np.sqrt(np.mean(np.power((np.array(valid['Close'])-np.array(forecast['Prediction'])), 2))))
 
-    return forecast
+    return forecast['Prediction']
 
 if __name__ == "__main__":
 

@@ -38,16 +38,16 @@ def svm_prediction(stock_prices, x_train, y_train, x_valid, y_valid):
 
     #================================================
     stck_prices = stock_prices[['Date','Open','Low','High','Close']]
-    stck_prices.to_csv('msft_prices.csv',sep='\t')
-    dates = [pd.Timestamp(date) for date in stck_prices['Date']]
+    # stck_prices.to_csv('msft_prices.csv',sep='\t')
+    # dates = [pd.Timestamp(date) for date in stck_prices['Date']]
 
-    close = np.array(stck_prices['Close'],dtype='float')
+    # close = np.array(stck_prices['Close'],dtype='float')
+    # plt.title('Google')
+    # plt.scatter(dates,close)
+    # plt.show()
 
-    plt.title('Google')
-    plt.scatter(dates,close)
-    plt.show()
 
-    stck_prices = stck_prices.set_index('Date')
+    # stck_prices = stck_prices.set_index('Date')
 
 
 
@@ -91,7 +91,7 @@ def svm_prediction(stock_prices, x_train, y_train, x_valid, y_valid):
     # x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random_state=233)
     # for kernel_arg in ['rbf', 'poly', 'linear']:
     clf = svm.SVC(kernel='rbf', max_iter=5000)
-    clf.fit(x_train, y_train)
+    clf.fit(stock_prices[['Open','Low','High']], stock_prices['Close'])
     y_predict = clf.predict(x_valid)
 
     # accurary = clf.score(x_test, y_test)

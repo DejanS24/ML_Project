@@ -4,8 +4,9 @@ import pygal
 from bokeh.layouts import gridplot
 from bokeh.plotting import figure, show, output_file
 import numpy as np
+import pandas as pd
 from svm import svm_prediction
-from main import load_file, knn_predict, train_valid_split, preprocess, plot_graph
+from main import load_file, knn_predict, train_valid_split, preprocess, plot_graph, auto_arima_predict
 import matplotlib.pyplot as plt
 
 class MyWindow:
@@ -14,7 +15,7 @@ class MyWindow:
         self.window.wm_title("Stock prediction using ML")
         self.window.config(background="#FFFFFF")
         self.cap = None
-        self.mode = "google"
+        self.mode = "Google"
         self.algorithm = ""
         self.file_path = ""
 
@@ -34,7 +35,7 @@ class MyWindow:
         self.algorithm_label.grid(row=0, column=2, sticky=tk.W, pady=2, padx=4)
 
         self.combobox_algs = ttk.Combobox(self.imageFrame, values=["Linear Regression", "SVM", "Moving average", "Auto Arima", "KNN"], state="readonly")
-        self.combobox_algs.set("SVM")
+        self.combobox_algs.set("KNN")
         self.combobox_algs.grid(row=0, column=3, sticky=tk.W, pady=2, padx=4)
 
         self.ldBtn = tk.Button(self.imageFrame, text="Load", command=self.display_graph, width=5)
@@ -59,21 +60,22 @@ class MyWindow:
         if self.mode == "Google":
             self.file_path = "googl.us.txt"
         elif self.mode == "Apple":
-            self.file_path = "aapl.us.tx"
+            self.file_path = "aapl.us.txt"
         elif self.mode == "Amazon":
             self.file_path = "amzn.us.txt"
         elif self.mode == "Coca Cola":
             self.file_path = "ko.us.txt"
 
 
-        df = load_file(self.file_path)
+        # df = load_file(self.file_path)
 
+        df = pd.read_csv(self.file_path)
 
         if self.algorithm == "SVM":
             print("Svm izabran")
             # self.y_train, self.y_val, self.y_predict = svm_prediction(df)
 
-            new_df = preprocess(df)
+            new_df = preprocess(load_file(self.file_path))
             x_train, y_train, x_valid, y_valid, self.train, self.valid = train_valid_split(new_df)
             self.y_predict = svm_prediction(df, x_train, y_train, x_valid, y_valid)
             self.y_train = y_train
@@ -84,14 +86,29 @@ class MyWindow:
             #NISAM TESTIRAO MA, TREBA MODIFIKOVATI
         elif self.algorithm == "KNN":
             print("KNN izabran")
+            df = load_file(self.file_path)
             new_df = preprocess(df)
             x_train, y_train, x_valid, y_valid, self.train, self.valid = train_valid_split(new_df)
             self.y_predict = knn_predict(x_train, y_train, x_valid)
             self.y_train = y_train
             self.y_val = y_valid
+
+            plt.plot(self.y_train['Close'])
+            plt.plot(self.y_val['Close'])
+            plt.plot(self.y_predict['Prediction'])
+            plt.show()
+
+            # plot_graph(self.train, self.valid, self.y_predict)
         elif self.algorithm == "Auto Arima":
             print("Auto Arima izabran")
             # UBACI OVDE POZIV AUTO ARIMA METODE
+            df = load_file(self.file_path)
+            new_df = preprocess(df)
+            x_train, y_train, x_valid, y_valid, self.train, self.valid = train_valid_split(new_df)
+            self.y_predict = auto_arima_predict(df)
+            self.y_train = y_train
+            self.y_val = y_valid
+
         elif self.algorithm == "Linear Regression":
             print("Linear Regression izabran")
             # UBACI OVDE POZIV LINEAR REGRESSION
@@ -100,12 +117,7 @@ class MyWindow:
         print(self.y_predict)
 
         print("Zavrsio obucavanje i predikciju")
-        plt.plot(self.y_train)
-        plt.plot(self.y_val)
-        plt.plot(self.y_predict)
-        plt.show()
 
-        plot_graph(self.train, self.valid, self.y_predict)
 
         p1 = figure(x_axis_type="datetime", title="Stock Closing Prices")
         p1.grid.grid_line_alpha = 0.3

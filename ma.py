@@ -15,7 +15,7 @@ from sklearn.metrics import mean_squared_error
 # %matplotlib inline
 
 #### Input params ##################
-stk_path = "./data/VTI.csv"
+stk_path = "googl.us.txt"
 test_size = 0.2                 # proportion of dataset to be used as test set
 cv_size = 0.2                   # proportion of dataset to be used as cross-validation set
 Nmax = 21                       # for feature at day t, we use lags from t-1, t-2, ..., t-N as features
