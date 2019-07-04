@@ -81,9 +81,12 @@ class MyWindow:
             self.y_train = y_train
             self.y_val = y_valid
 
+
+
         elif self.algorithm == "Moving average":
             print("MA izabran")
             #NISAM TESTIRAO MA, TREBA MODIFIKOVATI
+
         elif self.algorithm == "KNN":
             print("KNN izabran")
             df = load_file(self.file_path)
@@ -93,9 +96,9 @@ class MyWindow:
             self.y_train = y_train
             self.y_val = y_valid
 
-            plt.plot(self.y_train['Close'])
-            plt.plot(self.y_val['Close'])
-            plt.plot(self.y_predict['Prediction'])
+            plt.plot(self.y_train)
+            plt.plot(self.y_val)
+            plt.plot(self.y_predict)
             plt.show()
 
             # plot_graph(self.train, self.valid, self.y_predict)
@@ -112,7 +115,17 @@ class MyWindow:
         elif self.algorithm == "Linear Regression":
             print("Linear Regression izabran")
             # UBACI OVDE POZIV LINEAR REGRESSION
+            df = load_file(self.file_path)
+            new_df = preprocess(df)
+            x_train, y_train, x_valid, y_valid, self.train, self.valid = train_valid_split(new_df)
+            self.y_predict = run_regression(df, 1)
+            self.y_train = y_train
+            self.y_val = y_valid
 
+            plt.plot(self.y_train)
+            plt.plot(self.y_val)
+            plt.plot(self.y_predict)
+            plt.show()
 
         print(self.y_predict)
 
@@ -124,10 +137,12 @@ class MyWindow:
         p1.xaxis.axis_label = 'Date'
         p1.yaxis.axis_label = 'Price'
 
-        p1.line(df['Date'], self.valid['Close'], color='#A6CEE3', legend=self.mode)
-        p1.line(df['Date'], self.y_predict, color='#B2DF8A', legend="Predicted "+self.mode)
+        plot_dates = df['Date']
+        plot_dates = plot_dates[-len(self.y_predict):]
+        p1.line(plot_dates, self.valid['Close'], color='#A6CEE3', legend=self.mode)
+        p1.line(plot_dates, self.y_predict, color='#B2DF8A', legend="Predicted "+self.mode)
 
-        output_file("stocks.html", title="stocks.py example")
+        output_file("stocks.html", title="Stocks prediction")
 
         show(gridplot([[p1]], plot_width=500, plot_height=500))
 
