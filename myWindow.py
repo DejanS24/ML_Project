@@ -37,7 +37,7 @@ class MyWindow:
         self.algorithm_label = tk.Label(self.imageFrame, text="Algorithm:")
         self.algorithm_label.grid(row=0, column=2, sticky=tk.W, pady=2, padx=4)
 
-        self.combobox_algs = ttk.Combobox(self.imageFrame, values=["Linear Regression", "SVM", "Moving average", "Auto Arima", "KNN"], state="readonly")
+        self.combobox_algs = ttk.Combobox(self.imageFrame, values=["Linear Regression", "Prophet", "Moving average", "Auto Arima", "KNN"], state="readonly")
         self.combobox_algs.set("KNN")
         self.combobox_algs.grid(row=0, column=3, sticky=tk.W, pady=2, padx=4)
 
@@ -74,19 +74,19 @@ class MyWindow:
 
         df = pd.read_csv(self.file_path)
 
-        if self.algorithm == "SVM":
-            print("Svm izabran")
-            # self.y_train, self.y_val, self.y_predict = svm_prediction(df)
+        # if self.algorithm == "SVM":
+        #     print("Svm izabran")
+        #     # self.y_train, self.y_val, self.y_predict = svm_prediction(df)
+        #
+        #     new_df = preprocess(load_file(self.file_path))
+        #     x_train, y_train, x_valid, y_valid, self.train, self.valid = train_valid_split(new_df)
+        #     self.y_predict = svm_prediction(df, x_train, y_train, x_valid, y_valid)
+        #     self.y_train = y_train
+        #     self.y_val = y_valid
 
-            new_df = preprocess(load_file(self.file_path))
-            x_train, y_train, x_valid, y_valid, self.train, self.valid = train_valid_split(new_df)
-            self.y_predict = svm_prediction(df, x_train, y_train, x_valid, y_valid)
-            self.y_train = y_train
-            self.y_val = y_valid
 
 
-
-        elif self.algorithm == "Moving average":
+        if self.algorithm == "Moving average":
             print("MA izabran")
             #NISAM TESTIRAO MA, TREBA MODIFIKOVATI
 
@@ -140,7 +140,7 @@ class MyWindow:
             df = load_file(self.file_path)
             new_df = preprocess(df)
             x_train, y_train, x_valid, y_valid, self.train, self.valid = train_valid_split(new_df)
-            self.y_predict = prophet_predict(df, self.valid)
+            self.y_predict = prophet_predict(self.train, self.valid)
             self.y_train = y_train
             self.y_val = y_valid
 

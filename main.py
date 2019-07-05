@@ -11,6 +11,8 @@ from sklearn.model_selection import GridSearchCV
 from pyramid.arima import auto_arima
 
 from sklearn.preprocessing import MinMaxScaler
+
+# from fbprophet import Prophet
 scaler = MinMaxScaler(feature_range=(0, 1))
 
 
@@ -123,6 +125,16 @@ def auto_arima_predict(data):
     print(np.sqrt(np.mean(np.power((np.array(valid['Close'])-np.array(forecast['Prediction'])), 2))))
 
     return forecast['Prediction']
+
+
+def prophet_predict(train, valid):
+    # model = Prophet()
+    # model.fit(train)
+    #
+    # close_prices = model.make_future_dataframe(periods=len(valid))
+    #
+    # return model.predict(close_prices)
+    return []
 
 if __name__ == "__main__":
 
